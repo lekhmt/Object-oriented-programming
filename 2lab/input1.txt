@@ -1,0 +1,15 @@
+i = {1, 0, 0}
+j = {0, 1, 0}
+k = i & j
+print k
+length k
+r = 2 * i + j - k
+print r
+s = i * 1.5 - j - 2 * k
+print s
+is r == s
+is |r| == |s|
+angle i j
+cos i j
+angle s r
+cos s r

@@ -1,0 +1,85 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <wchar.h>
+#include "vector.h"
+
+static Memory memory;
+
+COMPILER calc
+
+CHARACTERS
+    letter = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
+    digit = "0123456789".
+    cr = '\r'. lf = '\n'. tab = '\t'.
+TOKENS
+    Var = letter { letter | digit }.
+    Num = {"-"} digit { digit } {"."} { digit } .
+IGNORE cr + lf + tab
+PRODUCTIONS
+
+    calc = S { S }.
+
+    S                                   (. Vector v; .)
+        = Var                           (. std::wstring name = t->val; .)
+        [ "=" Expr<v> ]                 (. memory.save(name, v); .)
+        | "print" Var                   (. std::wcout << t->val << ": " << memory.get(t->val); .)
+        | "length" Var                  (. std::wcout << "|" << t->val << "| = " << memory.get(t->val).length() << "\n"; .)
+        | "angle" Var                   (. Vector v1 = memory.get(t->val);
+                                           std::wstring name1 = t->val;.)
+          Var                           (. Vector v2 = memory.get(t->val);
+                                           std::wstring name2 = t->val;
+                                           double ang = angle(v1, v2);
+                                           std::wcout << name1 << "^" << name2 << " = " << ang << "\n"; .)
+        | "cos" Var                     (. Vector v1 = memory.get(t->val);
+                                           std::wstring name1 = t->val;.)
+          Var                           (. Vector v2 = memory.get(t->val);
+                                           std::wstring name2 = t->val;
+                                           double ang = cos_angle(v1, v2);
+                                           std::wcout << "cos " << name1 << "^" << name2 << " = " << ang << "\n"; .)
+       | "is"
+       {
+       Var                              (. Vector v1 = memory.get(t->val); std::wstring name1 = t->val; .)
+       "==" Var                         (. Vector v2 = memory.get(t->val); std::wstring name2 = t->val;
+                                           std::wcout << name1 << " = " << name2 << " is ";
+                                           if (v1.is_match(v2)) { std::wcout << "true\n"; }
+                                           else { std::wcout << "false\n"; } .)
+       | "|"
+         Var                            (. Vector v1 = memory.get(t->val); std::wstring name1 = t->val; .)
+         "|"
+         "==" "|"
+         Var                            (. Vector v2 = memory.get(t->val); std::wstring name2 = t->val;
+                                           std::wcout << "|" << name1 << "| == |" << name2 << "| is ";
+                                           if (v1.is_equal(v2)) { std::wcout << "true\n"; }
+                                           else { std::wcout << "false\n"; } .)
+         "|"
+       }.
+
+    Expr<. Vector& v .>                 (. Vector v1, v2;.)
+       = IntExpr<v1>                    (. v = v1; .)
+       { "+" IntExpr<v2>                (. v = v + v2; .)
+       | "-" IntExpr<v2>                (. v = v - v2; .)
+       }.
+
+    IntExpr<. Vector& v .>              (. Vector v1, v2; .)
+       = UniExpr<v1>                    (. v = v1; .)
+       { "*" Num                        (. v = v * wcstod(t->val, NULL); .)
+       | "&" UniExpr<v2>                (. v = (v & v2); .)
+       }
+       | Num                            (. double num = wcstod(t->val, NULL); .)
+         "*" UniExpr<v2>                (. v = num * v2; .).
+
+
+    UniExpr<. Vector& v .>              (. Vector v1;.)
+       = Set<v1>                        (. v = v1; .)
+       | Var                            (. v = memory.get(t->val); .)
+       | "(" Expr<v> ")".
+
+    Set<. Vector& v .>
+        = "{" Num                       (. double x = wcstod(t->val, NULL);   .)
+          "," Num                       (. double y = wcstod(t->val, NULL);   .)
+          "," Num                       (. double z = wcstod(t->val, NULL);   .)
+          "}"                           (. v = Vector(x, y, z); .).
+
+END calc.
+
