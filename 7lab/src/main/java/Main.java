@@ -1,4 +1,4 @@
-import gui.*;
+import gui.App;
 
 /**
  * Вариант 5

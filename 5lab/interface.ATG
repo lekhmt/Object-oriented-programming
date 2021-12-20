@@ -25,7 +25,29 @@ PRODUCTIONS
         SetTriangle<data>                      (. auto t = Triangle<int>(data[0], data[1], data[2]);
                                                   s.push(t); .)
         |
-        "print"                                 (. s.print(); .)
+        "print"                                (. std::cout << "> print\n"; s.print(); .)
+        |
+        "get" Num                              (. int i =  wcstod(t->val, NULL);
+                                                  std::cout << "> get " << i << "\n"; s.print(i - 1); .)
+        |
+        "top"                                  (. std::cout << "> top\n"; std::shared_ptr<Triangle<int>> t = s.top();
+                                                  if (t){ std::cout << *t << "\n"; } .)
+        |
+        "pop"                                  (. std::cout << "> pop\n"; std::shared_ptr<Triangle<int>> t = s.pop();
+                                                  if (t){ std::cout << *t << "\n"; } .)
+        |
+        "insert"                               (. std::vector<std::pair<int, int>> data(3); .)
+        SetTriangle<data>                      (. auto tmp = Triangle<int>(data[0], data[1], data[2]); .)
+        Num                                    (. int i = wcstod(t->val, NULL); i -= 2;
+                                                  std::cout << "> insert to " << i + 2 << "\n";
+                                                  s.insert(tmp, i); .)
+        |
+        "erase" Num                            (. int i = wcstod(t->val, NULL); i -= 1;
+                                                  std::cout << "> erase from " << i + 1 << "\n";
+                                                  s.erase(i); .)
+        |
+        "count" Num                            (. double i = wcstod(t->val, NULL);
+                                                  std::cout << "> count if area < " << i << "\n" << s.count(i) << "\n"; .)
     .
 
     SetTriangle<. std::vector<std::pair<int, int>>& data .> (. int x, y; .)

@@ -1,7 +1,7 @@
 // Copyright 2021 lekhmt
 
-#ifndef OOP_EXERCISE_02_INTERFACE_H
-#define OOP_EXERCISE_02_INTERFACE_H
+#ifndef OOP_EXERCISE_03_INTERFACE_H
+#define OOP_EXERCISE_03_INTERFACE_H
 
 #include "figure.h"
 
@@ -22,4 +22,4 @@ public:
 };
 
 
-#endif //OOP_EXERCISE_02_INTERFACE_H
+#endif //OOP_EXERCISE_03_INTERFACE_H

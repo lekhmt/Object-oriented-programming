@@ -2,7 +2,6 @@ package figures;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 
 public class Rhombus extends Figure {

@@ -59,11 +59,11 @@ struct Stack {
     std::shared_ptr<T> top() const;
     Iterator<T> begin() const;
     Iterator<T> end() const;
-    void insert(Iterator<T> it, T elem);
-    void erase(Iterator<T> it);
+    void insert(T elem, int i);
+    void erase(int i);
     void print(int i) const;
     void print() const;
-
+    int count(double i) const;
 };
 
 #endif //OOP_EXERCISE_05_STACK_H

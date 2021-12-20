@@ -3,6 +3,8 @@
 #include "../header/interface.h"
 #include <iostream>
 
+typedef point_t vector_t;
+
 void Interface::add_octagon(coordinates_t points) {
     auto* t = new Octagon(points[0], points[1], points[2], points[3],
                         points[4], points[5], points[6], points[7]);
@@ -16,6 +18,12 @@ void Interface::add_triangle(coordinates_t points) {
 
 void Interface::add_square(coordinates_t points) {
     auto* t = new Square(points[0], points[1], points[2], points[3]);
+    vector_t v = { points[1].first - points[0].first, points[1].second - points[0].second };
+    vector_t v1 = { points[2].first - points[1].first, points[2].second - points[1].second };
+    vector_t v2 = { points[3].first - points[2].first, points[3].second - points[2].second };
+    vector_t v3 = { points[0].first - points[3].first, points[0].second - points[3].second };
+    double v_by_v1 = v.first * v1.first + v.second * v1.second;
+    double v_by_v3 = v.first * v3.first + v.second * v3.second;
     memory.push_back(t);
 }
 

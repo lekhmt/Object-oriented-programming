@@ -3,6 +3,9 @@
 #include <iostream>
 #include "stack.h"
 
+template struct Stack<Triangle<int>>;
+template struct Triangle<int>;
+
 template<class T>
 Triangle<T>::Triangle(vertex_t<T> v1, vertex_t<T> v2, vertex_t<T> v3) {
     vertex[0] = v1;
@@ -27,7 +30,7 @@ template<class U>
 std::ostream& operator<< (std::ostream& out, const Triangle<U>& e){
     std::cout << "triangle (" << e.vertex[0].first << ", " << e.vertex[0].second << "), " <<
               "(" << e.vertex[1].first << ", " << e.vertex[1].second << "), " <<
-              "(" << e.vertex[2].first << ", " << e.vertex[2].second << ")";
+              "(" << e.vertex[2].first << ", " << e.vertex[2].second << "); area is " << e.area();
     return out;
 }
 
@@ -94,7 +97,7 @@ Stack<T>::Stack(){
 template<class T>
 std::shared_ptr<T> Stack<T>::pop(){
     if (!size){
-        std::wcout << "stack is empty\n";
+        std::wcout << "error: stack is empty\n";
         return nullptr;
     }
     auto tmp = last->previous;
@@ -103,6 +106,7 @@ std::shared_ptr<T> Stack<T>::pop(){
         size = 0;
     } else {
         last->previous->previous->next = last;
+        last->previous = last->previous->previous;
         --size;
     }
     return tmp->value;
@@ -126,7 +130,7 @@ void Stack<T>::push(T element) {
 template<class T>
 std::shared_ptr<T> Stack<T>::top() const{
     if (!size){
-        std::wcout << "stack is empty\n";
+        std::wcout << "error: stack is empty\n";
         return nullptr;
     }
     return last->previous->value;
@@ -143,14 +147,35 @@ Iterator<T> Stack<T>::end() const{
 }
 
 template<class T>
-void Stack<T>::insert(Iterator<T> it, T elem){
+void Stack<T>::insert(T elem, int i){
+    if (i < -1 || i > this->size - 1){
+        std::cout << "error: invalid position\n";
+        return;
+    }
+    auto it = this->begin(); for (int k = 0; k < i; ++k){ ++it; }
     auto tmp = std::make_shared<StackElement<T>>(elem, it.current->next, it.current);
-    it.current->next->previous = tmp;
-    it.current->next = tmp;
+    if (i == -1){
+        tmp->previous = nullptr;
+        tmp->next = this->first;
+        this->first = tmp;
+    } else {
+        it.current->next->previous = tmp;
+        it.current->next = tmp;
+    }
 }
 
 template<class T>
-void Stack<T>::erase(Iterator<T> it){
+void Stack<T>::erase(int i){
+    if (i < 0 || i > this->size - 1){
+        std::cout << "error: invalid position\n";
+        return;
+    }
+    auto it = this->begin(); for (int k = 0; k < i; ++k){ ++it; }
+    if (i == 0){
+        this->first = this->first->next;
+        this->first->previous = nullptr;
+        return;
+    }
     it.current->previous->next = it.current->next;
     it.current->next->previous = it.current->previous;
 }
@@ -158,18 +183,24 @@ void Stack<T>::erase(Iterator<T> it){
 template<class T>
 void Stack<T>::print(int i) const{
     auto it = this->begin();
-    for (int k = 0; k < i; ++i){ ++it; }
+    for (int k = 0; k < i; ++k){ ++it; }
     std::cout << *(it.current->value) << std::endl;
 }
 
 template<class T>
 void Stack<T>::print() const{
-    for (Iterator<T> it = this->begin(); it != this->end(); ++it){
-        std::cout << *it << std::endl;
-    }
+    std::for_each(this->begin(), this->end(), [](T i){ std::cout << i << "\n"; });
 }
 
-template struct Stack<Triangle<int>>;
-template struct Triangle<int>;
+template<class T>
+double get_area(Triangle<int> i, Stack<T> s){
+    return i.area();
+}
+
+template<class T>
+int Stack<T>::count(double a) const{
+    return std::count_if(this->begin(), this->end(), [&a](T i){ return i.area() < a; });
+}
+
 
 

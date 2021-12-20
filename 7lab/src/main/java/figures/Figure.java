@@ -1,8 +1,6 @@
 package figures;
 
 import java.awt.*;
-import java.io.Serializable;
-import java.util.List;
 
 public abstract class Figure {
 

@@ -3,13 +3,12 @@
 // создать шаблон-коллекцию стек, содержащий шаблон-класса треугольника
 
 #include <iostream>
-#include <algorithm>
-/*#include "Scanner.h"
-#include "Parser.h"*/
-#include <memory>
+#include "Scanner.h"
+#include "Parser.h"
+
 
 int main(int argc, char* argv[]) {
-    /*if (argc == 2) {
+    if (argc == 2) {
         wchar_t* file = coco_string_create(argv[1]);
         auto* scanner = new Scanner(file);
         auto* parser  = new Parser(scanner);
@@ -21,6 +20,5 @@ int main(int argc, char* argv[]) {
     } else {
         std::cout << "Use: translator filename\n";
         return 1;
-    }*/
-
+    }
 }

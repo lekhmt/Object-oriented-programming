@@ -63,50 +63,101 @@ bool Parser::WeakSeparator(int n, int syFol, int repFol) {
 
 void Parser::Interface() {
 		S();
-		while (la->kind == 2 /* "push" */ || la->kind == 3 /* "print" */) {
+		while (StartOf(1)) {
 			S();
 		}
 }
 
 void Parser::S() {
-		if (la->kind == 2 /* "push" */) {
+		switch (la->kind) {
+		case 2 /* "push" */: {
 			Get();
 			std::vector<std::pair<int, int>> data(3); 
 			SetTriangle(data);
 			auto t = Triangle<int>(data[0], data[1], data[2]);
 			s.push(t); 
-		} else if (la->kind == 3 /* "print" */) {
+			break;
+		}
+		case 3 /* "print" */: {
 			Get();
-			s.print(); 
-		} else SynErr(9);
+			std::cout << "> print\n"; s.print(); 
+			break;
+		}
+		case 4 /* "get" */: {
+			Get();
+			Expect(_Num);
+			int i =  wcstod(t->val, NULL);
+			std::cout << "> get " << i << "\n"; s.print(i - 1); 
+			break;
+		}
+		case 5 /* "top" */: {
+			Get();
+			std::cout << "> top\n"; std::shared_ptr<Triangle<int>> t = s.top();
+			if (t){ std::cout << *t << "\n"; } 
+			break;
+		}
+		case 6 /* "pop" */: {
+			Get();
+			std::cout << "> pop\n"; std::shared_ptr<Triangle<int>> t = s.pop();
+			if (t){ std::cout << *t << "\n"; } 
+			break;
+		}
+		case 7 /* "insert" */: {
+			Get();
+			std::vector<std::pair<int, int>> data(3); 
+			SetTriangle(data);
+			auto tmp = Triangle<int>(data[0], data[1], data[2]); 
+			Expect(_Num);
+			int i = wcstod(t->val, NULL); i -= 2;
+			std::cout << "> insert to " << i + 2 << "\n";
+			s.insert(tmp, i); 
+			break;
+		}
+		case 8 /* "erase" */: {
+			Get();
+			Expect(_Num);
+			int i = wcstod(t->val, NULL); i -= 1;
+			std::cout << "> erase from " << i + 1 << "\n";
+			s.erase(i); 
+			break;
+		}
+		case 9 /* "count" */: {
+			Get();
+			Expect(_Num);
+			double i = wcstod(t->val, NULL);
+			std::cout << "> count if area < " << i << "\n" << s.count(i) << "\n"; 
+			break;
+		}
+		default: SynErr(15); break;
+		}
 }
 
 void Parser::SetTriangle(std::vector<std::pair<int, int>>& data ) {
 		int x, y; 
-		Expect(4 /* "(" */);
+		Expect(10 /* "(" */);
 		Expect(_Num);
 		x = wcstod(t->val, NULL); 
-		Expect(5 /* "," */);
+		Expect(11 /* "," */);
 		Expect(_Num);
 		y = wcstod(t->val, NULL);
 		data[0] = {x, y}; 
-		Expect(6 /* ")," */);
-		Expect(4 /* "(" */);
+		Expect(12 /* ")," */);
+		Expect(10 /* "(" */);
 		Expect(_Num);
 		x = wcstod(t->val, NULL); 
-		Expect(5 /* "," */);
+		Expect(11 /* "," */);
 		Expect(_Num);
 		y = wcstod(t->val, NULL);
 		data[1] = {x, y}; 
-		Expect(6 /* ")," */);
-		Expect(4 /* "(" */);
+		Expect(12 /* ")," */);
+		Expect(10 /* "(" */);
 		Expect(_Num);
 		x = wcstod(t->val, NULL); 
-		Expect(5 /* "," */);
+		Expect(11 /* "," */);
 		Expect(_Num);
 		y = wcstod(t->val, NULL);
 		data[2] = {x, y}; 
-		Expect(7 /* ")" */);
+		Expect(13 /* ")" */);
 }
 
 
@@ -210,7 +261,7 @@ void Parser::Parse() {
 }
 
 Parser::Parser(Scanner *scanner) {
-	maxT = 8;
+	maxT = 14;
 
 	ParserInitCaller<Parser>::CallInit(this);
 	dummyToken = NULL;
@@ -225,8 +276,9 @@ bool Parser::StartOf(int s) {
 	const bool T = true;
 	const bool x = false;
 
-	static bool set[1][10] = {
-		{T,x,x,x, x,x,x,x, x,x}
+	static bool set[2][16] = {
+		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
+		{x,x,T,T, T,T,T,T, T,T,x,x, x,x,x,x}
 	};
 
 
@@ -251,12 +303,18 @@ void Errors::SynErr(int line, int col, int n) {
 			case 1: s = coco_string_create(L"Num expected"); break;
 			case 2: s = coco_string_create(L"\"push\" expected"); break;
 			case 3: s = coco_string_create(L"\"print\" expected"); break;
-			case 4: s = coco_string_create(L"\"(\" expected"); break;
-			case 5: s = coco_string_create(L"\",\" expected"); break;
-			case 6: s = coco_string_create(L"\"),\" expected"); break;
-			case 7: s = coco_string_create(L"\")\" expected"); break;
-			case 8: s = coco_string_create(L"??? expected"); break;
-			case 9: s = coco_string_create(L"invalid S"); break;
+			case 4: s = coco_string_create(L"\"get\" expected"); break;
+			case 5: s = coco_string_create(L"\"top\" expected"); break;
+			case 6: s = coco_string_create(L"\"pop\" expected"); break;
+			case 7: s = coco_string_create(L"\"insert\" expected"); break;
+			case 8: s = coco_string_create(L"\"erase\" expected"); break;
+			case 9: s = coco_string_create(L"\"count\" expected"); break;
+			case 10: s = coco_string_create(L"\"(\" expected"); break;
+			case 11: s = coco_string_create(L"\",\" expected"); break;
+			case 12: s = coco_string_create(L"\"),\" expected"); break;
+			case 13: s = coco_string_create(L"\")\" expected"); break;
+			case 14: s = coco_string_create(L"??? expected"); break;
+			case 15: s = coco_string_create(L"invalid S"); break;
 
 		default:
 		{

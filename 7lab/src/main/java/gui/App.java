@@ -1,7 +1,7 @@
 package gui;
 
-import figures.*;
 import figures.Point;
+import figures.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -13,7 +13,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 enum ACTION_TYPE {
     ADD,

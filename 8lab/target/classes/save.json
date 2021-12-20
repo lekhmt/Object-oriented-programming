@@ -1,0 +1,21 @@
+{
+  "figures": [
+    {
+      "up_side": "50.0",
+      "down_size": "50.0",
+      "type": "trapezoid",
+      "theta": "50.0",
+      "center_y": "50.0",
+      "center_x": "50.0",
+      "height": "50.0"
+    },
+    {
+      "width": "100.0",
+      "type": "rectangle",
+      "theta": "100.0",
+      "center_y": "100.0",
+      "center_x": "100.0",
+      "height": "100.0"
+    }
+  ]
+}

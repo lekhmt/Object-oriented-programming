@@ -1,0 +1,9 @@
+push (0, 0), (0, 2), (2, 0)
+push (3, 3), (0, 3), (3, 0)
+push (0, 1), (0, 3), (6, 6)
+print
+insert (4, 4), (4, 6), (3, 0) 2
+print
+erase 3
+print
+erase -17
